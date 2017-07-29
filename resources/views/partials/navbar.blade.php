@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">
@@ -6,13 +6,15 @@
             </a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active">
+            <li id="home-navbar">
                 <a href="#"><span class="glyphicon glyphicon-home"></span> Home</a>
             </li>
-            <li>
-                <a href="#"><span class="glyphicon glyphicon glyphicon-plus-sign"></span> Create Trip</a>
+            <li id="create-navbar">
+                <a href="{{ route('trips.create') }}">
+                    <span class="glyphicon glyphicon glyphicon-plus-sign"></span> Create Trip
+                </a>
             </li>
-            <li>
+            <li id="noti-navbar">
                 <a href="#"><span class="glyphicon glyphicon-globe"></span> Notification (0)</a>
             </li>
         </ul>
@@ -20,13 +22,17 @@
             @if (Auth::check())
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-user" aria-hidden="true"></i> {{ Auth::user()->name }} <span class="caret"></span>
+                        {{ Auth::user()->name }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Profile</a></li>
+                        <li><a href="#"><i class="fa fa-user" aria-hidden="true"></i> Profile</a></li>
+                        <li>
+                            <a href="{{ url('/logout') }}">
+                                <span class="glyphicon glyphicon-log-out"></span> Logout 
+                            </a>
+                        </li>
                     </ul>
                 </li>
-                <li><a href="{{ url('/logout') }}"> Logout </a></li>
             @else
                 <li><a href="{{ url('/login') }}">Login</a></li>
                 <li><a href="{{ url('/register') }}">Register</a></li>

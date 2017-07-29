@@ -1,0 +1,9 @@
+.navbar-right {
+	margin-right: 50px;
+	font-size: 1.3em;
+}
+
+.dropdown-menu > li {
+	line-height: 1.3em;
+	padding: 5px 5px;
+}
