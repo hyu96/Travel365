@@ -11,16 +11,28 @@
 |
 */
 
-Route::get('/', function () {
-    return view('layouts.master');
-});
+Route::get('/', "TripController@index")->name('homepage');
+Route::get('/home', 'TripController@index')->name('home');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-
 Route::get('/logout', 'Auth\LoginController@logout');
 
-Route::get('/upload-cover', 'ImageController@uploadCover');
+Route::post('/follow', 'FollowController@follow');
+Route::post('/unfollow', 'FollowController@unfollow');
+
+Route::post('/join', 'JoinController@join');
+Route::post('/join/cancel', 'JoinController@cancel');
+Route::post('/join/accept', 'JoinController@accept');
+Route::post('/join/refuse', 'JoinController@refuse');
+Route::post('/join/outTrip', 'JoinController@outTrip');
+Route::post('/join/kick', 'JoinController@kick');
+
+Route::get('/users/notification', 'UserController@noti')->middleware('auth')->name('users.noti');
+
+Route::post('/trips/cancel', 'TripController@cancelTrip');
+Route::post('/trips/start', 'TripController@startTrip');
+Route::post('/trips/finish', 'TripController@finishTrip');
 
 Route::resource('trips', 'TripController');
+

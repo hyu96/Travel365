@@ -16,16 +16,14 @@ class CreatePlansTable extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('trip_id')->unsigned();
-            $table->float('start_lat', 10, 6);
-            $table->float('start_lng', 10, 6);
-            $table->string('start_name');
-            $table->float('end_lat', 10, 6);
-            $table->float('end_lng', 10, 6);
-            $table->string('end_name');
-            $table->datetime('time_start');
-            $table->datetime('time_end');
-            $table->string('vehicle');
-            $table->string('activities');
+            $table->integer('index');
+            $table->float('place_lat', 10, 6);
+            $table->float('place_lng', 10, 6);
+            $table->string('place_name');
+            $table->integer('time')->nullable();
+            $table->string('vehicle')->nullable();
+            $table->string('activities')->nullable();
+            $table->integer('stay');
             $table->timestamps();
         });
     }

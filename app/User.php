@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Trip;
 
 class User extends Authenticatable
 {
@@ -29,4 +30,20 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Get all trip this user owned.
+     */
+    public function trip()
+    {
+        return $this->hasMany('App\Models\Trip');
+    }
+
+    public function join_request()
+    {
+        return $this->hasManyThrough(
+            'App\Models\Join', 'App\Models\Trip',
+            'user_id', 'trip_id', 'id'
+        );
+    }
 }

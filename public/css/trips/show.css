@@ -1,4 +1,4 @@
-html, body, .container { 
+html, body, .plan_detail { 
     height: 100%;
 }
 
@@ -32,15 +32,6 @@ img {
 	width: 100%;
 }
 
-.submit {
-	display: inline;
-}
-
-#add-button {
-	margin-bottom: 80px;
-    margin-left: 15px;
-}
-
 table.tableSection {
     display: table;
     width: 100%;
@@ -70,10 +61,36 @@ table.tableSection tr {
     table-layout: fixed;
 }
 
-#plan_label {
-    margin-left: 20px;
-}
-
 tr > th > input {
     width: 106px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+input {
+    margin-left: 5px;
+    line-height: 1.5em;
+    width: 70%;
+}
+
+.btn {
+    display: inline;
+    width: 120px;
+}
+
+.member {
+    margin-top: 25px;
+}
+
+.member-list {
+    border-left: 1px solid black;
+    height: 100%;
+}
+
+.kick {
+    width: 70px;
 }

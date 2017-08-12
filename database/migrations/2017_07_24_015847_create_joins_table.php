@@ -17,7 +17,7 @@ class CreateJoinsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->integer('trip_id')->unsigned();
-            $table->integer('status'); // 0 is accept, 1 is request, 2 is refuse
+            $table->integer('status'); // 1 is request, 2 is accept
             $table->timestamps();
         });
     }

@@ -1,0 +1,1 @@
+$('#home-navbar').addClass('active');

@@ -1,13 +1,13 @@
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{{ route('homepage') }}">
                 <i class="fa fa-plane" aria-hidden="true"></i> Travel365
             </a>
         </div>
         <ul class="nav navbar-nav">
             <li id="home-navbar">
-                <a href="#"><span class="glyphicon glyphicon-home"></span> Home</a>
+                <a href="{{ route('homepage') }}"><span class="glyphicon glyphicon-home"></span> Home</a>
             </li>
             <li id="create-navbar">
                 <a href="{{ route('trips.create') }}">
@@ -15,7 +15,9 @@
                 </a>
             </li>
             <li id="noti-navbar">
-                <a href="#"><span class="glyphicon glyphicon-globe"></span> Notification (0)</a>
+                <a href="{{ route('users.noti') }}"><span class="glyphicon glyphicon-globe"></span> 
+                    Notification (<span id="notify">{{ $notiNum }}</span>)
+                </a>
             </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">

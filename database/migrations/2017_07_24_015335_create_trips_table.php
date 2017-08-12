@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateTripsTable extends Migration
-{
+{   
     /**
      * Run the migrations.
      *
@@ -23,6 +23,7 @@ class CreateTripsTable extends Migration
             $table->float('place_lat', 10, 6);
             $table->float('place_lng', 10, 6);
             $table->string('place_name');
+            $table->integer('status');
             $table->timestamps();
         });
     }

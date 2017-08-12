@@ -5,7 +5,7 @@
 @endsection
 
 @section('head.css')
-    <link href="{{ asset('/css/trips/create.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/trips/edit.css') }}" rel="stylesheet">
 @endsection
 
 @section('body.content')
@@ -29,21 +29,20 @@
                     </div>
                 @endif
                 <div class="col-md-4">
-                    <h2>Trip Information</h2>
-                    <input type="hidden" name="places" id="places" value="{{ old('places') }}">
+                    <input type="hidden" name="places" id="places" value="{{ $plans }}">
                     <div class="form-group">
                         <label for="name">Name:</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ $trip->name }}" required>
                     </div>
 
                     <div class="form-group">
                         <label for="time_start">Time Start:</label>
-                        <input type="text" class="form-control" id="time_start" name="time_start" value="{{ old('time_start') }}" required>
+                        <input type="text" class="form-control" id="time_start" name="time_start" value="{{ $trip->time_start }}" required>
                     </div>
 
                     <div class="form-group">
                         <label for="time_end">Time End:</label>
-                        <input type="text" class="form-control" id="time_end" name="time_end" value="{{ old('time_end') }}" readonly="readonly">
+                        <input type="text" class="form-control" id="time_end" name="time_end" value="{{ $trip->time_end }}" readonly="readonly">
                     </div>
 
                     <div class="form-group">
@@ -53,7 +52,7 @@
                 <div class="col-md-7 col-md-offset-1">
                     <h2>Cover</h2>
                     <input type="file" id="cover_file" name="cover_file">
-                    <img src="" id="cover-image" style="width: 650px">
+                    <img src="{{ asset($trip->cover) }}" id="cover-image" style="width: 650px">
                 </div>
             </div>
         </form>
@@ -148,7 +147,7 @@
 @endsection
 
 @section('body.js')
-    <script src="{{ asset('/js/trips/create.js') }}"></script> 
+    <script src="{{ asset('/js/trips/edit.js') }}"></script> 
     <script async defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAsUPogq_PeMpW7RjS29odIP1to7wbS0Sk&libraries=places&callback=initMap">
     </script>
