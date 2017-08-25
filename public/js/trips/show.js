@@ -16,6 +16,12 @@ function initMap() {
     directionsDisplay.setMap(map);
 }
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+    }
+});
+
 //store marker in array places and display route in screen
 function calculateAndDisplayRoute(directionsService, directionsDisplay) {
     var waypts = [];
@@ -51,12 +57,6 @@ function calculateAndDisplayRoute(directionsService, directionsDisplay) {
 $("#follow").on('click', follow);
 
 function follow() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var dataFollow = {
         "trip_id" : $("#trip_id").val(),
         "user_id" : $("#user_id").val()
@@ -83,12 +83,6 @@ function follow() {
 $("#unfollow").on('click', unfollow);
 
 function unfollow() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var dataFollow = {
         "trip_id" : $("#trip_id").val(),
         "user_id" : $("#user_id").val()
@@ -117,12 +111,6 @@ $("#join").on('click', join);
 
 function join() {
     follow();
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var data = {
         "user_id" : $("#user_id").val(),
         "trip_id" : $("#trip_id").val()
@@ -148,19 +136,13 @@ function join() {
 $("#cancel_join").on('click',cancelJoin);
 
 function cancelJoin() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var data = {
         "user_id" : $("#user_id").val(),
         "trip_id" : $("#trip_id").val()
     }
     
     $.ajax({
-        url: '/join/cancelJoin',
+        url: '/join/cancel',
         type: "post",
         dataType: "text",
         data: data,
@@ -179,12 +161,6 @@ function cancelJoin() {
 $("#out_trip").on('click',outTrip);
 
 function outTrip() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var data = {
         "user_id" : $("#user_id").val(),
         "trip_id" : $("#trip_id").val()
@@ -210,12 +186,6 @@ function outTrip() {
 $("#start").on('click',startTrip);
 
 function startTrip() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var data = {
         "trip_id" : $("#trip_id").val()
     }
@@ -229,6 +199,7 @@ function startTrip() {
             $("#div-button").html("<input type='button' value='Finish Trip' class='btn btn-primary' id='finish'>");
             $("#status").html("Status: <b>Running</b>");
             $("#finish").on('click', finishTrip);
+            $(".kick").remove();
         },
         error: function(data) {
             console.log(data);
@@ -240,12 +211,6 @@ function startTrip() {
 $("#cancel").on('click',cancelTrip);
 
 function cancelTrip() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var data = {
         "trip_id" : $("#trip_id").val()
     }
@@ -269,12 +234,6 @@ function cancelTrip() {
 $("#finish").on('click', finishTrip);
 
 function finishTrip() {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var data = {
         "trip_id" : $("#trip_id").val()
     }
@@ -299,12 +258,6 @@ $(".kick").on('click', kick);
 
 function kick() {
     var id = $(this).data("user_id");
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        }
-    });
-
     var data = {
         "trip_id" : $("#trip_id").val(),
         "user_id" : id
@@ -328,4 +281,67 @@ function kick() {
 //handle edit trip button click event
 $("#edit").on('click', function(){
     window.location.href = "/trips/" + $("#trip_id").val() + "/edit";
+});
+
+//press enter on comment box
+$('#comment_box').on('keypress', function (e) {
+    if(e.which === 13){
+        if ($("#cmt_content").val() == "") {
+            return false;
+        }
+
+        var dataComment = {
+            "trip_id" : $("#trip_id").val(),
+            "user_id" : $("#user_id").val(),
+            "content" : $("#cmt_content").val()
+        };
+
+        $.ajax({
+            url: '/comment/store',
+            type: "post",
+            dataType: "text",
+            data: dataComment,
+            success: function(data){
+                console.log(data);
+            },
+            error: function(data) {
+                console.log(0);
+            }
+        });
+    }
+});
+
+$( document ).ready(function() {
+    var socket = io.connect('http://127.0.0.1:8890');
+    console.log('connected..');
+    socket.on('message', function(data) {
+        data = JSON.parse(data);
+        console.log(data);
+        var html = "";
+        html += "<div class='row user_comment' data_user_id =" + data[0].id + " >";
+        html += "<div class='col-md-offset-2 col-md-1'>";
+        html += "<img src='/" + data[0].user.avatar + "' class='avatar'>";
+        html += "</div>";
+        html += "<div class='col-md-1'>";
+        html += "<a href='{{ route('users.profile', " + data[0].user.id  + " }}'>" + data[0].user.name + "</a>";
+        html += "</div>";
+        html += "<div class='col-md-8'>";              
+        html += "<div>";
+        html += data[0].content;
+        html += "</div>";
+        html += "<div>";
+        if ($("#user_id").length != 0) {
+            html += "<span id='reply'>Reply</span>";
+        }
+        html += "</div>";
+        html += "</div>"; 
+        $("#comment_show").append(html);
+        $("#cmt_content").val("");
+    });
+});
+
+$(".reply").on('click', function(){
+    var id = $(this).parent().parent().parent().parent().data('user_id');
+    var sub = $(".sub_comment_box").find("[data-id=" + id + "]");
+    console.log(sub);
 });

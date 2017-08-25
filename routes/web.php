@@ -21,18 +21,34 @@ Route::get('/logout', 'Auth\LoginController@logout');
 Route::post('/follow', 'FollowController@follow');
 Route::post('/unfollow', 'FollowController@unfollow');
 
-Route::post('/join', 'JoinController@join');
-Route::post('/join/cancel', 'JoinController@cancel');
-Route::post('/join/accept', 'JoinController@accept');
-Route::post('/join/refuse', 'JoinController@refuse');
-Route::post('/join/outTrip', 'JoinController@outTrip');
-Route::post('/join/kick', 'JoinController@kick');
+Route::prefix('join')->group(function () {
+	Route::post('/', 'JoinController@join');
+	Route::post('/cancel', 'JoinController@cancel');
+	Route::post('/accept', 'JoinController@accept');
+	Route::post('/refuse', 'JoinController@refuse');
+	Route::post('/outTrip', 'JoinController@outTrip');
+	Route::post('/kick', 'JoinController@kick');
+});
 
-Route::get('/users/notification', 'UserController@noti')->middleware('auth')->name('users.noti');
+Route::prefix('users')->group(function () {
+	Route::get('/notification', 'UserController@noti')->middleware('auth')->name('users.noti');
+	Route::get('/{id}', 'UserController@show')->name('users.profile');
+	Route::get('/{id}/edit', 'UserController@edit')->name('users.edit');
+	Route::post('/update', 'UserController@update')->name('users.update');
+});
 
-Route::post('/trips/cancel', 'TripController@cancelTrip');
-Route::post('/trips/start', 'TripController@startTrip');
-Route::post('/trips/finish', 'TripController@finishTrip');
 
-Route::resource('trips', 'TripController');
+Route::prefix('trips')->group(function () {
+    Route::post('/cancel', 'TripController@cancel');
+	Route::post('/start', 'TripController@start');
+	Route::post('/finish', 'TripController@finish');
+	Route::post('/update', 'TripController@update');
+});
+
+Route::post('/comment/store', "CommentController@store");
+
+
+Route::resource('trips', 'TripController', ['except' => [
+   	'update', 'destroy'
+]]);
 

@@ -1,0 +1,22 @@
+#avatar {
+	width: 100%;
+	height: auto;
+}
+
+.info {
+	font-size: 1.3em;
+}
+
+#edit {
+	margin-top: 10px;
+	width: 100%;
+}
+
+.cover {
+	width: 200px;
+	height: 70px;
+}
+
+.table > tbody > tr > th {
+	vertical-align: middle;
+}

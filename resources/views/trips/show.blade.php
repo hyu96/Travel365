@@ -17,7 +17,7 @@
 		</div>
 		<div class="col-md-8">
 			<h2>{{ $trip->name }}</h2>
-			<h4>Owner: <b>{{ $trip->owner->name }}</b></h4>
+			<h4>Owner: <a href="{{ route('users.profile', $trip->owner->id) }}"><b>{{ $trip->owner->name }}</b></a></h4>
 			<h4>From: <b>{{ $trip->time_start }}</b></h4>
 			<h4>To: <b>{{ $trip->time_end }}</b></h4>
             <h4 id="status">Status: 
@@ -100,19 +100,78 @@
         </div>
         <hr>
         <div class="container">
-            <div class="row">
                 <div class="col-md-8">
                     <h4 class="text-center">Plan Discuss</h4>
+                    <div class="comment-layout">
+                    <div class="show-comment" id="show-comment">
+                        @foreach($comments as $comment)
+                            @if($comment->parent_id == null)
+                            <div class="comment">
+                                <input type="hidden" class="comment_id" value="{{$comment->id}}" >
+                                <div class="avatar-user" style="background-image: url(/{{$comment->user->avatar}})"></div>
+                                <div class="right">
+                                    <div class="comment-and-name">
+                                        <a href="#" class="user-name">
+                                            <p>{{$comment->user->name}}</p>
+                                        </a>
+                                        <p> {{$comment->content}}</p>
+                                    </div>
+                                    <div class="show-sub-comment">
+                                        <button id="btn-{{$comment->id}}" class="btn-link" style="float:left; font-size: 13px">sub comment</button>
+                                    </div>
+                                    <div id="sub-comment-layout-{{$comment->id}}" style="display: none">
+                                        <div id="list-sub-comment-{{$comment->id}}">
+                                            @foreach($comments as $sub_comment)
+                                                @if($sub_comment->parent_id == $comment->id)
+                                                    <div class="sub-comment">
+                                                            <div class="avatar-user" style=" background-image: url(/{{$sub_comment->user->avatar}})"></div>
+                                                            <div class="content-comment">
+                                                                <div class="">
+                                                                    <a href="#" class="" class="user-name">
+                                                                        <p>{{$sub_comment->user->name}}</p>
+                                                                    </a>
+                                                                    <p> {{$sub_comment->content}}</p>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                        <div class="input-sub-comment" style="margin-left: 70px;">
+                                            <div class="avatar-user" style="background-image: url(/{{ $sub_comment->user->avatar }})" ></div>
+                                            <div class="form-group" style="width: 100%; display: inline-block; margin-top: 10px">
+                                                <input type="text" class="form-control" id="input-sub-comment-{{$comment->id}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    <div class="input-comment">
+                            <a href="a">
+                                <?php
+                                    $link_avatar_user = asset(Auth::User()->avatar)
+                                ?>
+                                <div class="avatar-user" style="background-image: url({{$link_avatar_user}})"></div>
+                            </a>
+                            <div class="form-group" style="margin-top: 10px; display: inline-block; width: 930px">
+                                <input type="email" class="form-control" id="input-comment">
+                            </div>
+                    </div>
                 </div>
+
+
                 <div class="col-md-4 member-list">
                     <h4 class="text-center">Joined Members</h4>
-                    @if ($permission['owner'] == 1)
+                    @if ($permission['owner'] == 1 and $trip->status == 1)
                         @foreach ($members as $member)
                         <div class="member" data-id="{{ $member->user->id }}">
                             <div class="row">
                                 <div class="col-md-5 col-md-offset-2">    
-                                    <img src="{{ asset('/avatars/default_avatar.png') }}" class="avatar">
-                                    {{ $member->user->name }}
+                                    <img src="{{ asset($member->user->avatar) }}" class="avatar">
+                                    <a href="{{ route('users.profile', $member->user->id ) }}">{{ $member->user->name }}</a>
                                 </div>
                                 <div class="col-md-1">
                                     <input type="button" class="btn btn-danger kick" data-user_id="{{ $member->user->id }}" value="Kick">
@@ -123,19 +182,20 @@
                     @else
                         @foreach ($members as $member)
                         <div class="member">
-                            <img src="{{ asset('/avatars/default_avatar.png') }}" class="avatar">
-                            {{ $member->user->name }}
+                            <img src="{{ asset($member->user->avatar) }}" class="avatar">
+                            <a href="{{ route('users.profile', $member->user->id) }}">{{ $member->user->name }}</a>
                         </div>
                         @endforeach
                     @endif
                 </div>
-            </div>
+            
         </div>
 	</div>
 @endsection
 
 @section('body.js')
 	<script src="{{ asset('/js/trips/show.js') }}"></script>
+    <script src="{{ asset('/js/common/socket.io.js') }}"></script>
 	<script async defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAsUPogq_PeMpW7RjS29odIP1to7wbS0Sk&libraries=places&callback=initMap">
     </script>

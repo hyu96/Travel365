@@ -6,7 +6,7 @@
 
 @section('head.css')
     <link href="{{ asset('/css/users/noti.css') }}" rel="stylesheet">
-@endsection
+@endsectionoll
 
 @section('body.content')
     <div class="container">
@@ -16,8 +16,11 @@
             <div data-id="{{ $request->id }}" class="request">
                 <div class="row">
                     <div class="col-md-offset-2 col-md-6">
-                        <img src="{{ asset('/avatars/default_avatar.png') }}" class="avatar">
-                        <b>{{ $request->user->name }}</b> want to join your <b>{{ $request->trip->name }}</b> trip
+                        <img src="{{ asset($request->user->avatar) }}" class="avatar">
+                        <a href="{{ route('users.profile', $request->user->id) }}">
+                            <b>{{ $request->user->name }}</b>
+                        </a> want to join your 
+                        <a href="{{ route('trips.show',$request->trip->id) }}"><b>{{ $request->trip->name }}</b></a> trip
                     </div>
                     <div class="col-md-4">
                         <input type="button" value="Accept" class="btn btn-primary accept" data-id="{{ $request->id }}">

@@ -10,12 +10,13 @@
 
 @section('body.content')
     <div class="container">
-        <h1 class="text-center">Create Trip</h1>
+        <h1 class="text-center">Edit Trip</h1>
         <hr>
         <div id="error">
                 
         </div>
         <form action="#" method="POST" enctype="multipart/form-data"  id="trip-form">
+            <input type="hidden" name="trip_id" value="{{ $trip->id }}">
             {{ csrf_field() }}
             <div class="row">
                 @if(count($errors) > 0)
@@ -46,7 +47,7 @@
                     </div>
 
                     <div class="form-group">
-                        <input type="button" name="submit" value="Finish Trip" class="btn btn-primary" id="submit">
+                        <input type="button" name="submit" value="Edit Trip" class="btn btn-primary" id="submit">
                     </div>
                 </div>
                 <div class="col-md-7 col-md-offset-1">

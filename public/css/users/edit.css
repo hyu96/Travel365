@@ -1,0 +1,23 @@
+#avatar {
+	width: 100%;
+	height: auto;
+}
+
+.info {
+	margin-top: 85px;
+}
+
+
+hr {
+	width: 80%;
+    background-color: #eee;
+    border: 0 none;
+    color: #eee;
+    height: 5px;
+}
+
+#submit {
+	width: 100%;
+	margin-top: 40px;
+	line-height: 2em;
+}

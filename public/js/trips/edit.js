@@ -15,8 +15,33 @@ function initMap() {
         center: {lat: 21.0245, lng: 105.84117},
         zoom: 8
     });
+    places = JSON.parse($("#places").val());
+    index = places.length;
+    places.forEach(function(place) {
+        place.lat = place.place_lat;
+        delete place.place_lat;    
+        place.lng = place.place_lng;
+        delete place.place_lng; 
+        place.name = place.place_name;
+        delete place.place_name; 
+    });
+    customizeMenu();
+    $("#start").val(places[places.length-1].name);
+    changeTableInfo();
+
+    marker_start = new google.maps.Marker({ 
+        position: new google.maps.LatLng(places[0].lat, places[0].lng), 
+        map: map,
+    });
+
+    marker_end = new google.maps.Marker({ 
+        position: new google.maps.LatLng(places[places.length-1].lat, places[places.length-1].lng), 
+        map: map,
+    });
+
     directionsService = new google.maps.DirectionsService;
     directionsDisplay = new google.maps.DirectionsRenderer;
+    calculateAndDisplayRoute(directionsService, directionsDisplay, marker_start, marker_end); 
     directionsDisplay.setMap(map);
 
     //handle google map click event 
@@ -405,8 +430,9 @@ $('#submit').on('click', function() {
         }
     });
 
+    console.log(new FormData($("#trip-form")[0]));
     $.ajax({
-        url: '/trips',
+        url: '/trips/update',
         type: "post",
         dataType: "text",
         async : false,

@@ -26,8 +26,8 @@ class JoinController extends Controller
     /**
      * cancel join request
      */
-    public function cancelJoin(Request $request) {
-    	$join = Join::where('user_id',$request->user_id)->where('trip_id',$request->trip_id)->delete();
+    public function cancel(Request $request) {
+    	$join = Join::where('user_id', $request->user_id)->where('trip_id', $request->trip_id)->delete();
     	return "canceled";
     }
 
@@ -36,7 +36,7 @@ class JoinController extends Controller
      */
     public function accept(Request $request) {
     	$join = Join::find($request->id);
-    	$join->status = 2;
+    	$join->status = Join::ACCEPT;
     	$join->save();
     	return "accepted";
     }
@@ -54,12 +54,12 @@ class JoinController extends Controller
      * out trip
      */
     public function outTrip(Request $request) {
-    	$join = Join::where('user_id',$request->user_id)->where('trip_id',$request->trip_id)->delete();
+    	$join = Join::where('user_id', $request->user_id)->where('trip_id', $request->trip_id)->delete();
     	return "out";
     }
 
     public function kick(Request $request) {
-        $join = Join::where('user_id',$request->user_id)->where('trip_id',$request->trip_id)->delete();
+        $join = Join::where('user_id', $request->user_id)->where('trip_id', $request->trip_id)->delete();
         return "kicked";
     }
 }

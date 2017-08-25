@@ -38,7 +38,7 @@ class HomeController extends Controller
     public function notiNum() {
         if (Auth::check()) {
             $join = User::find(Auth::id())->join_request;
-            $filter = $join->where('status', 1);
+            $filter = $join->where('status', Join::REQUEST);
             return count($filter);
         } else {
             return 0;

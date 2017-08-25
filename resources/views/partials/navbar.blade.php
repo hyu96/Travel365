@@ -22,12 +22,13 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             @if (Auth::check())
+                <img src="{{ asset(Auth::user()->avatar) }}" style="width: 60px; height: 50px; float: left;">
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                         {{ Auth::user()->name }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#"><i class="fa fa-user" aria-hidden="true"></i> Profile</a></li>
+                        <li><a href="{{ route('users.profile', Auth::id()) }}"><i class="fa fa-user" aria-hidden="true"></i> Profile</a></li>
                         <li>
                             <a href="{{ url('/logout') }}">
                                 <span class="glyphicon glyphicon-log-out"></span> Logout 

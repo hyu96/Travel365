@@ -6,7 +6,7 @@ use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Foundation\Http\FormRequest;
 use Carbon\Carbon;
 
-class StoreTrip extends FormRequest
+class EditTrip extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -81,7 +81,7 @@ class StoreTrip extends FormRequest
             "name" => "required",
             "time_start" => "required|date|after:".Carbon::now(),
             "time_end" => "required|date",
-            "cover_file" => "required|image",
+            "cover_file" => "sometimes|image",
             "places" => "places_require|places_check|close"
         ];
     }

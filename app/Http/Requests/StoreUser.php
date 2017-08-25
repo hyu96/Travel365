@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Factory as ValidationFactory;
 use Illuminate\Foundation\Http\FormRequest;
+use Carbon\Carbon;
 
-class StorePlan extends FormRequest
+class StoreUser extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,11 +26,12 @@ class StorePlan extends FormRequest
     public function rules()
     {
         return [
-            "start_name" => "required",
-            "end_name" => "required",
-            "time" => "required|numeric|min:0",
-            "vehicle" => "required",
-            "activities" => "required",
+            'name' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required|numeric',
+            'gender' => 'required',
+            'avatar_file' => 'image',
+            'birthday' => 'required|date|before:'.Carbon::now()
         ];
     }
 }

@@ -10,4 +10,9 @@ class Follow extends Model
 
     const FOLLOW = 1;
     const UNFOLLOW = 0;
+
+    public function trip()
+    {
+        return $this->belongsTo('App\Models\Trip','trip_id','id');
+    }
 }

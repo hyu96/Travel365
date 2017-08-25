@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-use App\Http\Requests\StorePlan;
 use App\Http\Requests\StoreTrip;
+use App\Http\Requests\EditTrip;
+use App\Models\Comment;
 use App\Models\Plan;
 use App\Models\Trip;
 use App\Models\Join;
@@ -31,9 +32,23 @@ class TripController extends Controller
     public function index()
     {
         $trips = Trip::with('owner')->get();
+
+        foreach ($trips as $trip) {
+            $trip->followNum = $trip->follow->count();
+            $joinNum = $trip->join;
+            $filter = $joinNum->where('status', Join::ACCEPT)->count();
+            $trip->joinNum   = $filter;
+        }
+
+        $newTrips = $trips->where('status', Trip::PLANNING)->sortBy('time_start')->take(5);
+        $hotTrips = $trips->sortByDesc('followNum')->take(5);
+        $allTrips = $trips;
+
         return view("trips.index", [
-            "trips" => $trips,
-            "notiNum" => $this->notiNum()
+            "allTrips" => $trips,
+            "newTrips" => $newTrips,
+            "hotTrips" => $hotTrips,
+            "notiNum"  => $this->notiNum()
         ]);
     }
 
@@ -57,7 +72,7 @@ class TripController extends Controller
     {
         $places = json_decode($request['places']);
         $trip = new Trip;
-        $trip->user_id = Auth::id();
+        $trip->user_id  = Auth::id();
         $trip->name = $request->name;
         $trip->time_start = $request->time_start;
         $trip->time_end = $request->time_end;
@@ -96,13 +111,15 @@ class TripController extends Controller
     {
         $trip = Trip::with('owner')->find($id);
         $plans = Trip::find($id)->plan;
-        $members = Join::with('user')->where('trip_id', $id)->where('status', 2)->get();
+        $members = Join::with('user')->where('trip_id', $id)->where('status', Join::ACCEPT)->get();
         $permission = $this->checkpermission($id);
+        $comments = Comment::where('trip_id', $id)->with('user')->get();
         return view("trips.show", [ 
             "trip" => $trip,
             "plans" => $plans,
             "permission" => $permission,
             "members" => $members,
+            "comments" => $comments,
             "notiNum" => $this->notiNum()
         ]);
     }
@@ -131,9 +148,42 @@ class TripController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EditTrip $request)
     {
-        //
+        $trip = Trip::find($request->trip_id);
+        $trip->name = $request->name;
+        $trip->time_start = $request->time_start;
+        $trip->time_end = $request->time_end;
+        if($request->hasFile('cover_file')) {
+            unlink($trip->cover);
+            $path = "covers/".$request->file('cover_file')->hashName();
+            $request->file('cover_file')->move(public_path("/covers"), $request->file('cover_file')->hashName());
+            $trip->cover = $path;
+        }
+        $trip->save();
+    
+        $plans = $trip->plan;
+        foreach ($plans as $plan) {
+            $plan->delete();
+        }
+
+        $places = json_decode($request['places']);
+        foreach ($places as $place) {
+            $plan = new Plan;
+            $plan->trip_id = $trip->id;
+            $plan->index = $place->index;
+            $plan->place_lat = $place->lat;
+            $plan->place_lng = $place->lng;
+            $plan->place_name = $place->name;
+            $plan->stay = $place->stay;
+            if ($place->index > 0) {
+                $plan->time = $place->time;
+                $plan->vehicle = $place->vehicle;
+                $plan->activities = $place->activities;                
+            }
+            $plan->save();
+        }
+        return "true";
     }
 
     /**
@@ -150,7 +200,7 @@ class TripController extends Controller
     /**
      * start Trip
      */
-    public function startTrip(Request $request) {
+    public function start(Request $request) {
         $trip = Trip::find($request->trip_id);
         $trip->status = Trip::RUNNING;
         $trip->save();
@@ -160,7 +210,7 @@ class TripController extends Controller
     /**
      * cancel Trip
      */
-    public function cancelTrip(Request $request) {
+    public function cancel(Request $request) {
         $trip = Trip::find($request->trip_id);
         $trip->status = Trip::CANCEL;
         $trip->save();
@@ -170,7 +220,7 @@ class TripController extends Controller
     /**
      * finish trip
      */
-    public function finishTrip(Request $request) {
+    public function finish(Request $request) {
         $trip = Trip::find($request->trip_id);
         $trip->status = Trip::FINISH;
         $trip->save();
@@ -202,7 +252,7 @@ class TripController extends Controller
             if($join->count() == 0) {
                 $permission['join'] = Join::NOT_JOIN;
             } else {
-                if ($join[0]->status == 1) {
+                if ($join[0]->status == Join::REQUEST) {
                     $permission['join'] = Join::REQUEST; 
                 } else {
                     $permission['join'] = Join::ACCEPT;
@@ -218,7 +268,7 @@ class TripController extends Controller
     public function notiNum() {
         if (Auth::check()) {
             $join = User::find(Auth::id())->join_request;
-            $filter = $join->where('status', 1);
+            $filter = $join->where('status', Join::REQUEST);
             return count($filter);
         } else {
             return 0;

@@ -44,4 +44,9 @@ class Trip extends Model
     {
         return $this->hasMany('App\Models\Join', 'trip_id');
     }
+
+    public function follow()
+    {
+        return $this->hasMany('App\Models\Follow', 'trip_id');
+    }
 }
